@@ -4,25 +4,22 @@ services:
             build: ./requirements/wordpress
             image: wordpress
             volumes:
-              - wordpress: 
+              - wordpress:/var/www/html
             env_file:
               - .env
-            depends_on: mariadb
+            depends_on:
+              - mariadb
             restart: always
-
         mariadb:
             container_name: mariadb
             build: ./requirements/mariadb
             image: mariadb
             env_file: .env
-            ports:
-              - "3306:3306"
             volumes:
               - mariadb:/var/lib/mysql
             networks:
               - ince
             restart: always
-
 volumes:
         mariadb:
             name: mariadb
@@ -31,7 +28,6 @@ volumes:
               device: ./requirements/mariadb
               o: bind
               type: none
-
         wordpress:
             name: wordpress
             driver : local
@@ -39,7 +35,6 @@ volumes:
               device: ./requirements/wordpress
               o: bind
               type: none
-
 networks:
         ince:
             name: ince

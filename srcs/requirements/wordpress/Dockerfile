@@ -1,7 +1,15 @@
-FROM alpine:3.21
+FROM alpine:3.20
 
-RUN apk update && apk add --no-cache php-fpm php-mysql curl
+RUN apk update && apk add --no-cache \
+    php \
+    php-fpm \
+    php-mysqli \
+    php-pdo \
+    php-pdo_mysql \
+    curl 
 
 COPY ./conf/wp-config.php  ./conf/www.conf ./tools/script.sh /
 
-CMD [ "chmod +x script.sh && ./script.sh" ]
+# RUN chmod +x /script.sh
+
+CMD ["/bin/sh", "/script.sh"]

@@ -15,4 +15,4 @@ volumes:
 images:
 	@docker compose -f srcs/docker-compose.yml images
 remove: down
-	@docker volume rm -f mariadb
+	docker rmi $(docker images -a -q)
