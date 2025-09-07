@@ -1,9 +1,13 @@
-FROM alpine:3.20
+FROM alpine:3.21
 
-RUN apk update && apk add --no-cache mariadb
+RUN apk update
+RUN apk add --no-cache mariadb  mariadb-client bash
+RUN mkdir -p /var/log/mysql && chown -R mysql:mysql /var/log/mysql
+RUN mkdir -p /run/mysqld && chown -R mysql:mysql /run/mysqld
 
-COPY ./conf/mariadb.conf ./tools/script.sh /
+RUN mkdir -p /files
 
-# EXPOSE 3306
-# RUN chmod +x /script.sh
-CMD ["/bin/sh", "/script.sh"]
+COPY ./conf/mariadb-server.cnf      /files
+COPY ./tools/script.sh              /files
+
+CMD ["/files/script.sh"]
