@@ -16,7 +16,6 @@ services:
     env_file: .env
     depends_on:
       - mariadb
-      - redis
     volumes:
       - wordpress:/var/www/html
     networks:
@@ -27,6 +26,8 @@ services:
     build: ./requirements/nginx
     image: nginx
     env_file: .env
+    depends_on:
+      - wordpress
     volumes:
       - wordpress:/var/www/html
     ports:
@@ -34,16 +35,48 @@ services:
     networks:
       - ince
     restart: always
-  # redis:
-  #   container_name: redis
-  #   build: ./bonus/redis
-  #   ports:
-  #     - "6379:6379"
-  #   networks:
-  #     - ince
-  #   restart: always
-  #   environment:
-  #     - env
+  redis:
+    container_name: redis
+    image: redis
+    build: ./bonus/redis
+    networks:
+      - ince
+    restart: always
+    env_file:
+      - .env
+  adminer:
+    container_name: adminer
+    image: adminer
+    build: ./bonus/Adminer
+    networks:
+      - ince
+    restart: always
+    depends_on:
+      - mariadb
+    env_file:
+      - .env
+  ftp-server:
+    container_name: ftp-server
+    image: ftp-server
+    build: ./bonus/ftp-server
+    ports:
+      - "21:21"
+      - "21100-21110:21100-21110"
+    volumes:
+      - "wordpress:/var/www/html"
+    networks:
+      - ince
+    restart: always
+    env_file:
+      - .env
+  website:
+    container_name: website
+    image: website
+    build: ./bonus/website
+    networks:
+      - ince
+    restart: always
+
 networks:
   ince:
     name: ince

@@ -1,8 +1,6 @@
 FROM alpine:3.21
 
-RUN	apk update && apk upgrade && apk add --no-cache redis
-RUN mkdir -p /files
-COPY ./tools/script.sh /files/script.sh
+RUN apk add --no-cache redis 
+COPY ./conf/redis.conf /etc/redis.conf
 
-ENTRYPOINT ["/tmp/script.sh"]
-
+CMD ["redis-server", "/etc/redis.conf"]

@@ -1,0 +1,12 @@
+FROM alpine:3.20
+
+RUN apk update && apk add --no-cache vsftpd
+
+RUN mkdir -p /files
+COPY ./tools/vsftpd.conf    /files
+COPY ./tools/script.sh      /files
+
+
+EXPOSE 21 21000-21010
+
+CMD ["/files/script.sh"]

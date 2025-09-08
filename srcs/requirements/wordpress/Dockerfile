@@ -1,7 +1,7 @@
 FROM alpine:3.21
 
 RUN apk update
-RUN apk add --no-cache php php-fpm php-phar php-mysqli php-pdo php-pdo_mysql php-mbstring php-iconv curl bash
+RUN apk add --no-cache php php-fpm php-phar php-mysqli php-pdo php-pdo_mysql php-mbstring php-iconv curl php-tokenizer  bash
 RUN adduser -S -G www-data -h /var/www -s /sbin/nologin www-data || true
 
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar 

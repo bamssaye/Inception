@@ -25,5 +25,4 @@ x80
 
 fi
 
-
 exec /usr/bin/mariadbd --user=mysql --console

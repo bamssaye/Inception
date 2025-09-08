@@ -4,7 +4,6 @@ RUN apk update
 RUN apk add --no-cache nginx openssl
 
 RUN mkdir -p /files
-COPY ./conf/nginx.conf  /files
 COPY ./tools/script.sh  /files
 
 EXPOSE 443
