@@ -1,7 +1,12 @@
 FROM alpine:3.21
 
-RUN apk update && apk add --no-cache nginx
+RUN apk update 
+RUN apk add --no-cache nginx openssl
 
-COPY ./conf/nginx.conf ./tools/script.sh /
+RUN mkdir -p /files
+COPY ./conf/nginx.conf  /files
+COPY ./tools/script.sh  /files
 
-CMD [ "chmod +x script.sh && ./script.sh" ]
+EXPOSE 443
+
+CMD ["/files/script.sh"]

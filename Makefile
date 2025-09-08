@@ -1,11 +1,11 @@
 build:
 	@docker compose -f srcs/docker-compose.yml build --no-cache
 run:
-	@docker compose -f srcs/docker-compose.yml run --rm mariadb sh
+	@docker compose -f srcs/docker-compose.yml run --rm nginx sh
 up:
 	@docker compose -f srcs/docker-compose.yml up -d
 down:
-	@docker compose -f srcs/docker-compose.yml down 
+	@docker compose -f srcs/docker-compose.yml down -v
 stop:
 	@docker compose -f srcs/docker-compose.yml stop
 start:
@@ -18,10 +18,13 @@ logs:
 	@docker logs wordpress  
 logss:
 	@docker logs mariadb
+logee:
+	@docker logs nginx
 remove: down
 	@docker compose -f srcs/docker-compose.yml down --rmi all
 	@docker volume rm -f wordpress
 	@docker volume rm -f mariadb
+	
 t: remove build up
 # 	docker rmi $(docker images -a -q)
 

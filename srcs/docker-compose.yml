@@ -1,16 +1,4 @@
 services:
-  wordpress:
-      container_name: wordpress
-      build: ./requirements/wordpress
-      image: wordpress
-      env_file: .env
-      depends_on:
-      - mariadb
-      volumes:
-        - wordpress:/var/www/html
-      networks:
-        - ince
-      restart: always
   mariadb:
     container_name: mariadb
     build: ./requirements/mariadb
@@ -21,7 +9,41 @@ services:
     networks:
       - ince
     restart: always
-
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    image: wordpress
+    env_file: .env
+    depends_on:
+      - mariadb
+      - redis
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - ince
+    restart: always
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    image: nginx
+    env_file: .env
+    volumes:
+      - wordpress:/var/www/html
+    ports:
+      - "443:443"
+    networks:
+      - ince
+    restart: always
+  # redis:
+  #   container_name: redis
+  #   build: ./bonus/redis
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - ince
+  #   restart: always
+  #   environment:
+  #     - env
 networks:
   ince:
     name: ince
@@ -45,3 +67,4 @@ volumes:
 
 #sudo rm -rf /home/bihix/data/*
 #docker exec mariadb  cat  /etc/my.cnf.d/mariadb-server.cnf
+#docker exec -it mariadb  mariadb -u root -p$DB_PASSWORD
