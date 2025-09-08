@@ -1,24 +1,45 @@
 #!/bin/sh
-set -e
 
-if [ ! -d "/var/lib/mysql/mysql" ]; then
-    mariadb-install-db --user=mysql --datadir=/var/lib/mysql
-    mv /files/mariadb-server.cnf /etc/my.cnf.d/mariadb-server.cnf
+if [ ! -d "/run/mysqld" ]; then
+	mkdir -p /run/mysqld
+	chown -R mysql:mysql /run/mysqld
 fi
 
-mariadbd --skip-networking --user=mysql &
-pid="$!"
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+	
+	chown -R mysql:mysql /var/lib/mysql
 
-sleep 3
+	mysql_install_db --basedir=/usr --datadir=/var/lib/mysql --user=mysql --rpm > /dev/null
 
-mariadb -protocol=socket -u root << x80
-    CREATE DATABASE IF NOT EXISTS $DB_NAME ;
-    CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD' ;
-    GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%' ;
-    CREATE USER 'root'@'%' IDENTIFIED BY 'dabi121';
-    GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
-    FLUSH PRIVILEGES;
-x80
+	tfile=`mktemp`
+	if [ ! -f "$tfile" ]; then
+		return 1
+	fi
 
-mysqladmin --protocol=socket -u root shutdown
-exec mariadbd --user=mysql --console
+	cat << EOF > $tfile
+USE mysql;
+FLUSH PRIVILEGES;
+
+DELETE FROM	mysql.user WHERE User='';
+DROP DATABASE test;
+DELETE FROM mysql.db WHERE Db='test';
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';
+
+CREATE DATABASE $DB_NAME CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE USER '$DB_USER'@'%' IDENTIFIED by '$DB_PASSWORD';
+GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%';
+
+FLUSH PRIVILEGES;
+EOF
+	# run init.sql
+	/usr/bin/mysqld --user=mysql --bootstrap < $tfile
+	rm -f $tfile
+fi
+
+# allow remote connections
+sed -i "s|skip-networking|# skip-networking|g" /etc/my.cnf.d/mariadb-server.cnf
+sed -i "s|.*bind-address\s*=.*|bind-address=0.0.0.0|g" /etc/my.cnf.d/mariadb-server.cnf
+
+exec /usr/bin/mysqld --user=mysql --console

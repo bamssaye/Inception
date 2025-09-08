@@ -1,7 +1,7 @@
 build:
 	@docker compose -f srcs/docker-compose.yml build --no-cache
 run:
-	@docker compose -f srcs/docker-compose.yml run --rm wordpress sh
+	@docker compose -f srcs/docker-compose.yml run --rm mariadb sh
 up:
 	@docker compose -f srcs/docker-compose.yml up -d
 down:

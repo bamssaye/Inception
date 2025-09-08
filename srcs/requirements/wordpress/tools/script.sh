@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+# set -ex
 
 
 
@@ -7,6 +7,8 @@ while ! nc -z mariadb 3306; do
     sleep 2
 done
 
+
+if [  -f "/files/www.conf" ]; then
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar 
 chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
 
@@ -16,7 +18,6 @@ mkdir -p /var/www/html && cd /var/www/html
 
 
 php -d memory_limit=512M /usr/local/bin/wp core download --allow-root --force --path=/var/www/html
-
 wp config create \
   --dbname="$DB_NAME" \
   --dbuser="$DB_USER" \
@@ -40,14 +41,15 @@ wp theme install mavix-portfolio --activate --allow-root
 wp plugin update --all --allow-root
 
 version=$(php -r 'echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;')
-ls /files
-ls /etc/php$version/php-fpm.d
+# ls /files
+# ls /etc/php$version/php-fpm.d
 
 mv /files/www.conf /etc/php$version/php-fpm.d/www.conf
+# sed -i 's/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/g' /etc/php/7.3/fpm/pool.d/www.conf
 
 mkdir -p /run/php
-
-cat /etc/passwd | grep www-data
+fi
+version=$(php -r 'echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;')
 
 FPM="/usr/sbin/php-fpm$version"
 $FPM -F
