@@ -21,9 +21,7 @@ if [ ! -f /var/www/html/wp-config.php ]; then
       --allow-root
     wp config set WP_HOME "$URL" --type=constant --allow-root
     wp config set WP_SITEURL "$URL" --type=constant --allow-root
-    wp config set WP_REDIS_HOST redis --path=/var/www/html --allow-root 
-    wp config set WP_REDIS_PORT 6379 --path=/var/www/html --raw --allow-root 
-    wp config set WP_CACHE true --path=/var/www/html --raw --allow-root 
+    
 fi
 
 if ! wp core is-installed --path=/var/www/html --allow-root; then
@@ -42,6 +40,10 @@ if ! wp core is-installed --path=/var/www/html --allow-root; then
     wp theme install variations --activate --allow-root
     wp plugin update --all --allow-root
     wp plugin install redis-cache --activate --path=/var/www/html --allow-root
+    
+    wp config set WP_REDIS_HOST redis --path=/var/www/html --allow-root 
+    wp config set WP_REDIS_PORT 6379 --path=/var/www/html --raw --allow-root 
+    wp config set WP_CACHE true --path=/var/www/html --raw --allow-root 
     wp redis enable --path=/var/www/html --allow-root
     mv /files/www.conf /etc/php$version/php-fpm.d/www.conf
     mkdir -p /run/php

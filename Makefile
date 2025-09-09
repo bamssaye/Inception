@@ -14,6 +14,8 @@ volumes:
 	@docker compose -f srcs/docker-compose.yml volumes
 images:
 	@docker compose -f srcs/docker-compose.yml images
+ftp:
+	@docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ftp-server
 logs:
 	@docker logs wordpress  
 logss:

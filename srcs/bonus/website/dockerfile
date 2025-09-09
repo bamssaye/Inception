@@ -2,8 +2,9 @@ FROM alpine:3.21
 
 RUN apk add --no-cache nginx
 RUN mkdir -p /var/www/html
-COPY ./tools/index.html /var/www/html
 COPY ./tools/co.conf  /etc/nginx/http.d/default.conf
+COPY ./tools/index.html /var/www/html
+
 
 
 CMD ["nginx", "-g", "daemon off;"]

@@ -22,8 +22,17 @@ server {
         proxy_set_header Host $host;
     }
     location /me {
-        proxy_pass http://website:80;
+        proxy_pass http://website:80/;
         proxy_set_header Host $host;
+    }
+    location /cadvisor {
+        rewrite ^/cadvisor(/.*)$ $1 break;
+        proxy_pass http://cadvisor:8080/containers;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_redirect http://cadvisor:8080/ /cadvisor/;
     }
     location ~ \.php$ {
         include fastcgi_params;

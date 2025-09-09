@@ -1,9 +1,12 @@
 #!/bin/sh
 
+# set -ex
+
+chown -R mysql:mysql /var/lib/mysql
 
 if [ ! -d "/var/lib/mysql/mysql" ]; then
 
-	mysql_install_db --user=mysql --datadir=/var/lib/mysql
+	mariadb-install-db --user=mysql
 	mv /files/mariadb-server.cnf /etc/my.cnf.d/mariadb-server.cnf
 	/usr/bin/mariadbd --user=mysql --bootstrap << x80
     USE mysql;
@@ -25,4 +28,4 @@ x80
 
 fi
 
-exec /usr/bin/mariadbd --user=mysql --console
+exec /usr/bin/mariadbd --user=mysql --datadir=/var/lib/mysql --console
