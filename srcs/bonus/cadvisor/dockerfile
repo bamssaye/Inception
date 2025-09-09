@@ -2,9 +2,14 @@ FROM alpine:3.20
 
 RUN apk update && apk add --no-cache \
     curl bash ca-certificates && update-ca-certificates
+RUN apk update &&  apk add --no-cache curl
 
-RUN curl -sSL "https://github.com/google/cadvisor/releases/download/v0.49.2/cadvisor-v0.49.2-linux-amd64" -o /usr/local/bin/cadvisor \
-    && chmod +x /usr/local/bin/cadvisor
+COPY ./tools/script.sh /script.sh
 
-VOLUME ["/rootfs", "/var/run", "/sys", "/var/lib/docker"]
-CMD ["/usr/local/bin/cadvisor", "-logtostderr", "-port=8080"]
+CMD ["/script.sh"]
+
+# RUN curl -sSL "https://github.com/google/cadvisor/releases/download/v0.49.2/cadvisor-v0.49.2-linux-amd64" -o /usr/local/bin/cadvisor \
+#     && chmod +x /usr/local/bin/cadvisor
+
+# VOLUME ["/rootfs", "/var/run", "/sys", "/var/lib/docker"]
+# CMD ["/usr/local/bin/cadvisor", "-logtostderr", "-port=8080"]
