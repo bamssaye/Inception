@@ -1,13 +1,12 @@
 #!/bin/sh
 
-# set -ex
+
 
 chown -R mysql:mysql /var/lib/mysql
 
 if [ ! -d "/var/lib/mysql/mysql" ]; then
 
 	mariadb-install-db --user=mysql
-	mv /files/mariadb-server.cnf /etc/my.cnf.d/mariadb-server.cnf
 	/usr/bin/mariadbd --user=mysql --bootstrap << x80
     USE mysql;
     FLUSH PRIVILEGES;
@@ -25,7 +24,10 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
 
     FLUSH PRIVILEGES;
 x80
-
 fi
+
+if [  -f "/files/mariadb-server.cnf" ]; then
+    mv /files/mariadb-server.cnf /etc/my.cnf.d/mariadb-server.cnf
+fi 
 
 exec /usr/bin/mariadbd --user=mysql --datadir=/var/lib/mysql --console

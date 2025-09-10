@@ -27,7 +27,7 @@ server {
     }
 
     location /cadvisor {
-        rewrite ^/cadvisor(/.*)?$ $1 break;
+        rewrite ^/cadvisor(/.*)$ $1 break;
         proxy_pass http://cadvisor:8080;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -36,6 +36,7 @@ server {
         proxy_redirect http://cadvisor:8080/ /cadvisor/;
 	    proxy_redirect / /cadvisor/;
     }
+    
     location ~ \.php$ {
         include fastcgi_params;
         fastcgi_split_path_info ^(.+\.php)(/.+)$;

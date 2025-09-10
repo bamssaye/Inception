@@ -1,5 +1,6 @@
 #!/bin/sh
-# set -ex
+
+
 
 until nc -z "$DB_HOST" $DB_PORT; do
     sleep 3
@@ -45,11 +46,14 @@ if ! wp core is-installed --path=/var/www/html --allow-root; then
     wp config set WP_REDIS_PORT 6379 --path=/var/www/html --raw --allow-root 
     wp config set WP_CACHE true --path=/var/www/html --raw --allow-root 
     wp redis enable --path=/var/www/html --allow-root
-    mv /files/www.conf /etc/php$version/php-fpm.d/www.conf
-    mkdir -p /run/php
+    chmod -R 755 /var/www/html
 fi
 
-#     
+if [ -f /files/www.conf ]; then
+    cp /files/www.conf /etc/php$version/php-fpm.d/www.conf
+fi
+mkdir -p /run/php
+
 FPM="/usr/sbin/php-fpm$version"
 $FPM -F
 
