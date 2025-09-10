@@ -1,5 +1,4 @@
 #!/bin/sh
-#set -ex
 
 openssl req -x509 -newkey rsa:2048 -nodes -keyout $KEY_ -out $CERTS_ -days 365 -subj "/CN=$DOMAIIN_NAME"
 cat << x80"" >> /files/default.conf

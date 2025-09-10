@@ -108,7 +108,3 @@ volumes:
         o: bind
         type: none
 
-
-#sudo rm -rf /home/bihix/data/*
-#docker exec mariadb  cat  /etc/my.cnf.d/mariadb-server.cnf
-#docker exec -it mariadb  mariadb -u root -p$DB_PASSWORD
